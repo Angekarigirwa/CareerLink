@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .status-accepted { color: green; font-weight: bold; }
+        .status-rejected { color: red; font-weight: bold; }
+        .status-reviewed { color: orange; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Application Status Update</h2>
+        <p>Your application for <strong>{{ job_title }}</strong> has been <span class="status-{{ status }}">{{ status }}</span>.</p>
+        {% if notes %}
+        <p><strong>Employer Notes:</strong> {{ notes }}</p>
+        {% endif %}
+        <p><a href="{{ url_for('dashboard', _external=True) }}">View in Dashboard</a></p>
+        <p>Best regards,<br>CareerLink Team</p>
+    </div>
+</body>
+</html>

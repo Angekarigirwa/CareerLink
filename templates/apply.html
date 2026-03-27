@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 800px;">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">Apply for: {{ job.title }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <h5>Company: {{ job.company }}</h5>
+                <p><strong>Location:</strong> {{ job.location or 'Not specified' }}</p>
+                <p><strong>Salary:</strong> {{ job.salary or 'Negotiable' }}</p>
+                <p><strong>Description:</strong></p>
+                <p>{{ job.description }}</p>
+                {% if job.requirements %}
+                <p><strong>Requirements:</strong></p>
+                <p>{{ job.requirements }}</p>
+                {% endif %}
+            </div>
+            
+            <form method="POST">
+                <div class="mb-3">
+                    <label>Cover Letter</label>
+                    <textarea name="cover_letter" rows="6" class="form-control" required 
+                        placeholder="Why are you a good fit for this position?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Submit Application</button>
+                <a href="{{ url_for('jobs') }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

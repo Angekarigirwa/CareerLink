@@ -341,10 +341,6 @@ def jobs():
     categories = Category.query.all()
     
     return render_template('jobs.html', jobs=jobs, categories=categories)
-@app.route('/internships')
-def internships():
-    internships = Job.query.filter_by(is_active=True, job_type='internship').all()
-    return render_template('internships.html', internships=internships)
 
 @app.route('/jobs/<int:job_id>')
 def job_detail(job_id):
@@ -593,30 +589,6 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
-@app.route('/rwandan-jobs')
-def rwandan_jobs():
-    category = request.args.get('category')
-    
-    query = Job.query.filter_by(is_active=True)
-    
-    # Filter jobs by Rwandan companies
-    rwandan_companies = [
-        'Andela Rwanda', 'KCB Bank Rwanda', 'Marriott Hotel Kigali', 
-        'Mara Phones Rwanda', 'Zipline Rwanda', 'Rwanda Energy Group (REG)',
-        'MTN Rwanda', 'RwandAir', 'Bank of Kigali', 'Radisson Blu Hotel Kigali'
-    ]
-    
-    query = query.filter(Job.company.in_(rwandan_companies))
-    
-    if category:
-        cat = Category.query.filter_by(name=category).first()
-        if cat:
-            query = query.filter_by(category_id=cat.id)
-    
-    jobs = query.order_by(Job.created_at.desc()).all()
-    categories = Category.query.all()
-    
-    return render_template('rwandan_jobs.html', jobs=jobs, categories=categories)
 
 if __name__ == '__main__':
     with app.app_context():
@@ -650,3 +622,5 @@ if __name__ == '__main__':
         print("📝 Login with: admin / admin123")
     
     app.run(debug=True)
+
+

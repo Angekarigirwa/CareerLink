@@ -1,1 +1,69 @@
+{% extends "base.html" %}
 
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET">
+                        <div class="mb-3">
+                            <label>Category</label>
+                            <select name="category" class="form-control">
+                                <option value="">All Categories</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.name }}">{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Job Type</label>
+                            <select name="type" class="form-control">
+                                <option value="">All Types</option>
+                                <option value="full-time">Full Time</option>
+                                <option value="part-time">Part Time</option>
+                                <option value="internship">Internship</option>
+                                <option value="contract">Contract</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Location</label>
+                            <input type="text" name="location" class="form-control" placeholder="City or remote">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <h2>All Jobs</h2>
+            {% if jobs %}
+                <div class="row">
+                    {% for job in jobs %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ job.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ job.company }}</h6>
+                                <p class="card-text">{{ job.description[:150] }}...</p>
+                                <p><i class="fas fa-map-marker-alt"></i> {{ job.location or 'Remote' }}</p>
+                                <p><span class="badge bg-primary">{{ job.job_type }}</span>
+                                   <span class="badge bg-info">{{ job.category }}</span></p>
+                                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">No jobs found matching your criteria.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+EOF

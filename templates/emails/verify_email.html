@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .button { display: inline-block; padding: 10px 20px; background: #0a66c2; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome to CareerLink!</h2>
+        <p>Hi {{ username }},</p>
+        <p>Thank you for registering with CareerLink. Please verify your email address by clicking the button below:</p>
+        <p><a href="{{ link }}" class="button">Verify Email</a></p>
+        <p>If you didn't create an account, please ignore this email.</p>
+        <p>Best regards,<br>CareerLink Team</p>
+    </div>
+</body>
+</html>

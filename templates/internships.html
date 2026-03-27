@@ -1,1 +1,35 @@
+{% extends "base.html" %}
 
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Internship Opportunities</h2>
+    
+    {% if internships %}
+        <div class="row">
+            {% for internship in internships %}
+            <div class="col-md-6 mb-4">
+                <div class="card job-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ internship.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <i class="fas fa-building"></i> {{ internship.company }}
+                        </h6>
+                        <p class="card-text">{{ internship.description[:200] }}{% if internship.description|length > 200 %}...{% endif %}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ internship.location or 'Remote' }} | 
+                           <i class="fas fa-dollar-sign"></i> {{ internship.salary or 'Unpaid' }}</p>
+                        {% if internship.category %}
+                        <p><span class="badge bg-info">{{ internship.category.name }}</span></p>
+                        {% endif %}
+                        <a href="{{ url_for('apply', job_id=internship.id) }}" class="btn btn-success">Apply Now</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No internships available at the moment. Check back later!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .button { display: inline-block; padding: 10px 20px; background: #0a66c2; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>New Application Received!</h2>
+        <p>A new application has been submitted for <strong>{{ job_title }}</strong> from <strong>{{ applicant }}</strong>.</p>
+        <p><a href="{{ url_for('review_application', application_id=application_id, _external=True) }}" class="button">Review Application</a></p>
+        <p>Best regards,<br>CareerLink Team</p>
+    </div>
+</body>
+</html>

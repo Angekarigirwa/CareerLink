@@ -1,92 +1,135 @@
 import java.util.*;
-import java.io.*;
 
 public class JobMatcher {
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.err.println("Please provide user skills");
-            System.exit(1);
+            System.out.println("[]");
+            return;
         }
         
-        String userSkills = args[0];
+        String userSkills = args[0].toLowerCase();
         
-        // Sample job database with required skills
-        List<Job> jobs = new ArrayList<>();
-        jobs.add(new Job(1, "Software Engineer", "Tech Corp", 
-            Arrays.asList("Java", "Python", "SQL"), 80000));
-        jobs.add(new Job(2, "Web Developer", "Web Solutions", 
-            Arrays.asList("JavaScript", "HTML", "CSS"), 65000));
-        jobs.add(new Job(3, "Data Scientist", "Data Analytics Inc", 
-            Arrays.asList("Python", "Machine Learning", "Statistics"), 95000));
-        jobs.add(new Job(4, "DevOps Engineer", "Cloud Systems", 
-            Arrays.asList("Docker", "Kubernetes", "AWS"), 90000));
-        jobs.add(new Job(5, "Frontend Developer", "Creative Agency", 
-            Arrays.asList("React", "Vue.js", "Angular"), 70000));
+        // Create a list of jobs
+        List<Map<String, Object>> jobs = new ArrayList<>();
         
-        // Calculate match scores
+        // Job 1
+        Map<String, Object> job1 = new HashMap<>();
+        job1.put("jobId", 1);
+        job1.put("title", "Software Engineer");
+        job1.put("company", "Tech Corp");
+        job1.put("salary", 80000);
+        job1.put("skills", new String[]{"java", "python", "sql"});
+        jobs.add(job1);
+        
+        // Job 2
+        Map<String, Object> job2 = new HashMap<>();
+        job2.put("jobId", 2);
+        job2.put("title", "Web Developer");
+        job2.put("company", "Web Studio");
+        job2.put("salary", 65000);
+        job2.put("skills", new String[]{"javascript", "html", "css"});
+        jobs.add(job2);
+        
+        // Job 3
+        Map<String, Object> job3 = new HashMap<>();
+        job3.put("jobId", 3);
+        job3.put("title", "Data Scientist");
+        job3.put("company", "Data Inc");
+        job3.put("salary", 95000);
+        job3.put("skills", new String[]{"python", "ml", "statistics"});
+        jobs.add(job3);
+        
+        // Job 4
+        Map<String, Object> job4 = new HashMap<>();
+        job4.put("jobId", 4);
+        job4.put("title", "DevOps Engineer");
+        job4.put("company", "Cloud Systems");
+        job4.put("salary", 90000);
+        job4.put("skills", new String[]{"docker", "kubernetes", "aws"});
+        jobs.add(job4);
+        
+        // Job 5
+        Map<String, Object> job5 = new HashMap<>();
+        job5.put("jobId", 5);
+        job5.put("title", "Frontend Developer");
+        job5.put("company", "Creative Agency");
+        job5.put("salary", 70000);
+        job5.put("skills", new String[]{"react", "vue", "angular"});
+        jobs.add(job5);
+        
+        // Job 6 - Full Stack
+        Map<String, Object> job6 = new HashMap<>();
+        job6.put("jobId", 6);
+        job6.put("title", "Full Stack Developer");
+        job6.put("company", "Startup Inc");
+        job6.put("salary", 85000);
+        job6.put("skills", new String[]{"java", "javascript", "react", "python", "sql"});
+        jobs.add(job6);
+        
+        // Job 7 - Backend Developer
+        Map<String, Object> job7 = new HashMap<>();
+        job7.put("jobId", 7);
+        job7.put("title", "Backend Developer");
+        job7.put("company", "API First");
+        job7.put("salary", 82000);
+        job7.put("skills", new String[]{"java", "python", "sql", "aws"});
+        jobs.add(job7);
+        
+        // Calculate matches
         List<Map<String, Object>> matches = new ArrayList<>();
-        String[] userSkillArray = userSkills.toLowerCase().split(",");
+        String[] userSkillArray = userSkills.split(",");
         
-        for (Job job : jobs) {
+        for (Map<String, Object> job : jobs) {
+            String[] jobSkills = (String[]) job.get("skills");
             int matchCount = 0;
-            for (String skill : job.requiredSkills) {
-                for (String userSkill : userSkillArray) {
-                    if (skill.toLowerCase().contains(userSkill.trim())) {
+            
+            for (String userSkill : userSkillArray) {
+                userSkill = userSkill.trim();
+                for (String jobSkill : jobSkills) {
+                    if (jobSkill.contains(userSkill)) {
                         matchCount++;
                         break;
                     }
                 }
             }
             
-            double matchScore = (double) matchCount / job.requiredSkills.size() * 100;
+            double matchScore = (matchCount * 100.0) / jobSkills.length;
+            int roundedScore = (int) Math.round(matchScore);
             
             Map<String, Object> match = new HashMap<>();
-            match.put("jobId", job.id);
-            match.put("title", job.title);
-            match.put("company", job.company);
-            match.put("matchScore", Math.round(matchScore));
-            match.put("salary", job.salary);
+            match.put("jobId", job.get("jobId"));
+            match.put("title", job.get("title"));
+            match.put("company", job.get("company"));
+            match.put("matchScore", roundedScore);
+            match.put("salary", job.get("salary"));
             
             matches.add(match);
         }
         
         // Sort by match score
-        matches.sort((a, b) -> Double.compare(
-            (Double) b.get("matchScore"), 
-            (Double) a.get("matchScore")
-        ));
+        matches.sort((a, b) -> {
+            int scoreA = (int) a.get("matchScore");
+            int scoreB = (int) b.get("matchScore");
+            return Integer.compare(scoreB, scoreA);
+        });
         
-        // Output JSON
-        String jsonOutput = "[";
-        for (int i = 0; i < Math.min(5, matches.size()); i++) {
-            Map<String, Object> match = matches.get(i);
-            jsonOutput += "{";
-            jsonOutput += "\"jobId\":" + match.get("jobId") + ",";
-            jsonOutput += "\"title\":\"" + match.get("title") + "\",";
-            jsonOutput += "\"company\":\"" + match.get("company") + "\",";
-            jsonOutput += "\"matchScore\":" + match.get("matchScore") + ",";
-            jsonOutput += "\"salary\":" + match.get("salary");
-            jsonOutput += "}";
-            if (i < matches.size() - 1) jsonOutput += ",";
+        // Build JSON
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < matches.size(); i++) {
+            Map<String, Object> m = matches.get(i);
+            json.append("{");
+            json.append("\"jobId\":").append(m.get("jobId")).append(",");
+            json.append("\"title\":\"").append(m.get("title")).append("\",");
+            json.append("\"company\":\"").append(m.get("company")).append("\",");
+            json.append("\"matchScore\":").append(m.get("matchScore")).append(",");
+            json.append("\"salary\":").append(m.get("salary"));
+            json.append("}");
+            if (i < matches.size() - 1) {
+                json.append(",");
+            }
         }
-        jsonOutput += "]";
+        json.append("]");
         
-        System.out.println(jsonOutput);
-    }
-    
-    static class Job {
-        int id;
-        String title;
-        String company;
-        List<String> requiredSkills;
-        int salary;
-        
-        Job(int id, String title, String company, List<String> requiredSkills, int salary) {
-            this.id = id;
-            this.title = title;
-            this.company = company;
-            this.requiredSkills = requiredSkills;
-            this.salary = salary;
-        }
+        System.out.println(json.toString());
     }
 }

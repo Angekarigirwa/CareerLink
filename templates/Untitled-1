@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h4>Manage Job Categories</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" class="mb-4">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" name="name" class="form-control" placeholder="Category Name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" name="description" class="form-control" placeholder="Description">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Add Category</button>
+                    </div>
+                </div>
+            </form>
+            
+            <table class="table">
+                <thead>
+                    <tr><th>Name</th><th>Description</th><th>Jobs Count</th></tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description }}</td>
+                        <td>{{ category.jobs|length }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+EOF

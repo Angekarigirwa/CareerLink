@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Personalized Job Recommendations</h2>
+    <p class="lead">Based on your skills and profile</p>
+    
+    {% if jobs %}
+        <div class="row">
+            {% for job in jobs %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ job.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ job.company }}</h6>
+                        <p class="card-text">{{ job.description[:150] }}...</p>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ job.location or 'Remote' }}</p>
+                        <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No recommendations available. Update your profile with your skills to get personalized job matches!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+EOF
+
+# Create profile page
+cat > templates/profile.html << 'EOF'
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    {% if profile and profile.profile_picture %}
+                        <img src="{{ url_for('static', filename='uploads/' + profile.profile_picture) }}" 
+                             class="rounded-circle mb-3" width="150" height="150">
+                    {% else %}
+                        <i class="fas fa-user-circle fa-5x mb-3"></i>
+                    {% endif %}
+                    <h4>{{ current_user.username }}</h4>
+                    <p class="text-muted">{{ current_user.user_type|title }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label>Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ profile.full_name or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label>Phone</label>
+                            <input type="text" name="phone" class="form-control" value="{{ profile.phone or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label>Location</label>
+                            <input type="text" name="location" class="form-control" value="{{ profile.location or '' }}">
+                        </div>
+                        
+                        {% if current_user.user_type == 'student' %}
+                        <div class="mb-3">
+                            <label>Education</label>
+                            <textarea name="education" rows="3" class="form-control">{{ profile.education or '' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Skills (comma separated)</label>
+                            <textarea name="skills" rows="3" class="form-control">{{ profile.skills or '' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Experience</label>
+                            <textarea name="experience" rows="5" class="form-control">{{ profile.experience or '' }}</textarea>
+                        </div>
+                        {% else %}
+                        <div class="mb-3">
+                            <label>Company Name</label>
+                            <input type="text" name="company_name" class="form-control" value="{{ profile.company_name or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label>Company Website</label>
+                            <input type="url" name="company_website" class="form-control" value="{{ profile.company_website or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label>Company Description</label>
+                            <textarea name="company_description" rows="5" class="form-control">{{ profile.company_description or '' }}</textarea>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label>Profile Picture</label>
+                            <input type="file" name="profile_picture" class="form-control" accept="image/*">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Save Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+EOF
