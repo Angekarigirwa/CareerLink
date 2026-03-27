@@ -14,7 +14,13 @@ import hashlib
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-change-this'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///careerlink.db'
+
+# For Render deployment - use database in /tmp (writable location)
+if 'RENDER' in os.environ:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/careerlink.db'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///careerlink.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # File upload configuration
@@ -341,6 +347,7 @@ def jobs():
     categories = Category.query.all()
     
     return render_template('jobs.html', jobs=jobs, categories=categories)
+
 @app.route('/internships')
 def internships():
     internships = Job.query.filter_by(is_active=True, job_type='internship').all()
@@ -593,6 +600,7 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
+
 @app.route('/rwandan-jobs')
 def rwandan_jobs():
     category = request.args.get('category')
@@ -619,6 +627,7 @@ def rwandan_jobs():
     return render_template('rwandan_jobs.html', jobs=jobs, categories=categories)
 
 if __name__ == '__main__':
+    # Only create tables when running directly, not on Render
     with app.app_context():
         db.create_all()
         
@@ -649,4 +658,8 @@ if __name__ == '__main__':
         print("✅ Database initialized successfully!")
         print("📝 Login with: admin / admin123")
     
+    # For Render deployment - bind to 0.0.0.0
+if 'RENDER' in os.environ:
+    app.run(host='0.0.0.0', port=10000, debug=False)
+else:
     app.run(debug=True)
